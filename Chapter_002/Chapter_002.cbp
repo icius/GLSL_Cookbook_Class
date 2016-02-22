@@ -71,6 +71,8 @@
 		<Unit filename="shaders/floor.vert" />
 		<Unit filename="shaders/lamp.frag" />
 		<Unit filename="shaders/lamp.vert" />
+		<Unit filename="shaders/test.frag" />
+		<Unit filename="shaders/test.vert" />
 		<Unit filename="shaders/text.frag" />
 		<Unit filename="shaders/text.vert" />
 		<Unit filename="textures/wood.png" />

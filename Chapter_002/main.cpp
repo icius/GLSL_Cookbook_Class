@@ -101,14 +101,13 @@ int main()
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
 
     // Draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     GLSLProgram lampShader, floorShader, textShader, testShader;
 
     lampShader.init("shaders/lamp.vert","shaders/lamp.frag");
     floorShader.init("shaders/floor.vert","shaders/floor.frag");
     textShader.init("shaders/text.vert","shaders/text.frag");
-
     testShader.init("shaders/test.vert","shaders/test.frag");
 
     GLfloat planeVertices[] = {
