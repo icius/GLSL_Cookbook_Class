@@ -182,10 +182,12 @@ int main()
 
     // Load textures
     GLuint floorTexture = loadTexture((char *)"textures/wood.png");
+    GLuint floorSpec = loadTexture((char *)"textures/wood_spec.png");
 
     // Set texture units
     floorShader.use();
     floorShader.setUniform("material.diffuse", 0);
+    floorShader.setUniform("material.specular", 1);
 
     // Game loop
     while(!glfwWindowShouldClose(window))
@@ -266,11 +268,16 @@ int main()
         floorShader.setUniform("light.diffuse", glm::vec3(0.2f) * halogen);
         floorShader.setUniform("light.specular", glm::vec3(1.0f) * halogen);
 
-        floorShader.setUniform("material.specular",  0.5f, 0.5f, 0.5f);
-        floorShader.setUniform("material.shininess", 0.6f * 128);
+        floorShader.setUniform("material.shininess", 128.0f);
+
+        // Bind diffuse map
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, floorTexture);
+        // Bind specular map
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, floorSpec);
 
         glBindVertexArray(planeVAO);
-        glBindTexture(GL_TEXTURE_2D, floorTexture);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
 

@@ -7,7 +7,7 @@ in vec2 TexCoords;
 
 struct Material {
     sampler2D diffuse;
-    vec3 specular;
+    sampler2D specular;
     float shininess;
 };
 
@@ -58,7 +58,7 @@ vec3 ads(int lightIndex, vec3 viewDir, vec3 normal)
     vec3 halfwayDir = normalize(lightDir + viewDir);
     spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
-    vec3 specular = light.specular * spec * material.specular; // assuming bright white light color
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
 
     return(diffuse + specular);
 
