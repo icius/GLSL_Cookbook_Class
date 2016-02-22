@@ -110,9 +110,8 @@ int main()
     GLSLProgram lampShader, floorShader, textShader, testShader, adsShader;
 
     lampShader.init("shaders/lamp.vert","shaders/lamp.frag");
-    floorShader.init("shaders/floor.vert","shaders/floor.frag");
+    floorShader.init("shaders/ADSTex.vert","shaders/ADSTex.frag");
     textShader.init("shaders/text.vert","shaders/text.frag");
-    testShader.init("shaders/diffuse.vert","shaders/diffuse.frag");
     adsShader.init("shaders/ADS.vert", "shaders/ADS.frag");
 
     GLfloat planeVertices[] = {
@@ -262,19 +261,7 @@ int main()
 
         //Send values to the fragment shader
 
-
-/*
-        glUniform3f(glGetUniformLocation(adsShader.getHandle(), "light.ambient"), 0.05f, 0.05f, 0.05f);
-        glUniform3f(glGetUniformLocation(adsShader.getHandle(), "light.diffuse"), 0.3f, 0.3f, 0.3f);
-        glUniform3f(glGetUniformLocation(adsShader.getHandle(), "light.specular"), 1.0f, 1.0f, 1.0f);
-
-        glUniform3f(glGetUniformLocation(adsShader.getHandle(), "material.ambient"), 0.135f, 0.2225f, 0.1575f);
-        glUniform3f(glGetUniformLocation(adsShader.getHandle(), "material.diffuse"), 0.54f, 0.89f, 0.63f);
-        glUniform3f(glGetUniformLocation(adsShader.getHandle(), "material.specular"), 0.316228f, 0.316228f, 0.316228f);
-        glUniform1f(glGetUniformLocation(adsShader.getHandle(), "shininess"), 0.1f * 128);
-*/
-
-
+        adsShader.setUniform("lightPos", lightPos);
         adsShader.setUniform("viewPos", camera.Position);
         adsShader.setUniform("light.ambient", glm::vec3(0.05f) * halogen);
         adsShader.setUniform("light.diffuse", glm::vec3(0.6f) * halogen);
@@ -285,16 +272,6 @@ int main()
         adsShader.setUniform("material.diffuse", 0.07568f, 0.61424f, 0.07568f);
         adsShader.setUniform("material.specular", 0.633f, 0.727811f, 0.633f);
         adsShader.setUniform("material.shininess", 128.0f);
-
-     /*
-
-        adsShader.setUniform("material.ambient", 0.135f, 0.2225f, 0.1575f);
-        adsShader.setUniform("material.diffuse", 0.54f, 0.89f, 0.63f);
-        adsShader.setUniform("material.specular", 0.316228f, 0.316228f, 0.316228f);
-        adsShader.setUniform("material.shininess", 0.1f * 128);
-
-*/
-        adsShader.setUniform("lightPos", lightPos);
 
         torus.render();
         glBindVertexArray(0);
