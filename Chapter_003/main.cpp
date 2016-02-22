@@ -50,7 +50,7 @@ GLfloat lastFrame = 0.0f;
 GLfloat frameRate = 1000.0f;
 
 // World coordinates of a single light
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos( -3.5f,  2.5f, -4.0f);
 
 glm::vec3 halogen(1.0f, 0.945098039f, 0.878431373f);
 
@@ -117,7 +117,7 @@ int main()
     GLSLProgram lampShader, floorShader, textShader, testShader, adsShader;
 
     lampShader.init("shaders/lamp.vert","shaders/lamp.frag");
-    floorShader.init("shaders/ADSTex.vert","shaders/ADSTex.frag");
+    floorShader.init("shaders/ADSTexMulti.vert","shaders/ADSTexMulti.frag");
     textShader.init("shaders/text.vert","shaders/text.frag");
     adsShader.init("shaders/ADSMulti.vert", "shaders/ADSMulti.frag");
 
@@ -183,6 +183,10 @@ int main()
     // Load textures
     GLuint floorTexture = loadTexture((char *)"textures/wood.png");
 
+    // Set texture units
+    floorShader.use();
+    floorShader.setUniform("material.diffuse", 0);
+
     // Game loop
     while(!glfwWindowShouldClose(window))
     {
@@ -246,16 +250,24 @@ int main()
 
         floorShader.use();
 
-        floorShader.setUniform("view", view);
         floorShader.setUniform("projection", projection);
-        floorShader.setUniform("lightPos", lightPos);
+        floorShader.setUniform("view", view);
+
+
+        glUniform3fv(glGetUniformLocation(floorShader.getHandle(), "lightPositions"), 9,
+                     glm::value_ptr(lightPositions[0]));
+
+
+        //floorShader.setUniform("lightPos", lightPos);
+
         floorShader.setUniform("viewPos", camera.Position);
 
         floorShader.setUniform("light.ambient", glm::vec3(0.05f) * halogen);
-        floorShader.setUniform("light.diffuse", glm::vec3(0.6f) * halogen);
-        floorShader.setUniform("light.specular", glm::vec3(0.6f) * halogen);
-        floorShader.setUniform("material.shininess", 0.6f * 128);
+        floorShader.setUniform("light.diffuse", glm::vec3(0.2f) * halogen);
+        floorShader.setUniform("light.specular", glm::vec3(1.0f) * halogen);
 
+        floorShader.setUniform("material.specular",  0.5f, 0.5f, 0.5f);
+        floorShader.setUniform("material.shininess", 0.6f * 128);
 
         glBindVertexArray(planeVAO);
         glBindTexture(GL_TEXTURE_2D, floorTexture);
@@ -273,8 +285,12 @@ int main()
         adsShader.setUniform("view", view);
 
         model = glm::mat4();
-        model *= glm::rotate(glm::radians(-35.0f), vec3(1.0f,0.0f,0.0f));
-        model *= glm::rotate(glm::radians(35.0f), vec3(0.0f,1.0f,0.0f));
+
+        model *= glm::translate(glm::vec3(-3.5f, 0.0f, -4.0f));
+        model *= glm::rotate(glm::radians(-35.0f), vec3(1.0f, 0.0f, 0.0f));
+        model *= glm::rotate(glm::radians(35.0f), vec3(0.0f, 1.0f, 0.0f));
+
+
 
         adsShader.setUniform("model", model);
 
@@ -286,7 +302,7 @@ int main()
 
         adsShader.setUniform("viewPos", camera.Position);
         adsShader.setUniform("light.ambient", glm::vec3(0.05f) * halogen);
-        adsShader.setUniform("light.diffuse", glm::vec3(0.6f) * halogen);
+        adsShader.setUniform("light.diffuse", glm::vec3(0.2f) * halogen);
         adsShader.setUniform("light.specular", glm::vec3(1.0f) * halogen);
 
         adsShader.setUniform("material.ambient", 0.0215f, 0.1745f, 0.0215f);

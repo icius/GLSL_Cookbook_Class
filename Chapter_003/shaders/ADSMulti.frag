@@ -4,9 +4,6 @@ out vec4 FragColor;
 in vec3 Normal;
 in vec3 FragPos;
 
-//uniform vec3 lightPos;
-uniform vec3 viewPos;
-
 struct Material {
     vec3 ambient;  // Ka
     vec3 diffuse;  // Kd
@@ -20,17 +17,16 @@ struct Light {
     vec3 specular; // Ls
 };
 
+uniform vec3 viewPos;
 uniform vec3 lightPositions[9];
 uniform Material material;
 uniform Light light;
 
 vec3 ads(int lightIndex, vec3 viewDir, vec3 normal);
 
-vec3 color;
-
 void main()
 {
-    color = vec3(0.0);
+    vec3 color = vec3(0.0);
 
     vec3 normal = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);

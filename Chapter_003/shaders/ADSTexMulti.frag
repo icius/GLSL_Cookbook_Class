@@ -1,11 +1,13 @@
 #version 430 core
 out vec4 FragColor;
 
-in vec3 FragPos;
 in vec3 Normal;
+in vec3 FragPos;
 in vec2 TexCoords;
 
 struct Material {
+    sampler2D diffuse;
+    vec3 specular;
     float shininess;
 };
 
@@ -15,35 +17,50 @@ struct Light {
     vec3 specular; // Ls
 };
 
-uniform Light light;
-uniform Material material;
-
-uniform sampler2D floorTexture;
-uniform vec3 lightPos;
 uniform vec3 viewPos;
+uniform vec3 lightPositions[9];
+uniform Material material;
+uniform Light light;
+uniform sampler2D objTexture;
+
+vec3 ads(int lightIndex, vec3 viewDir, vec3 normal);
 
 void main()
 {
-    vec3 color = texture(floorTexture, TexCoords).rgb;
-    // Ambient
-    vec3 ambient = light.ambient * color;
+
+    vec3 color = vec3(0.0);
+
+    vec3 normal = normalize(Normal);
+    vec3 viewDir = normalize(viewPos - FragPos);
+
+    for (int i = 0; i < 9; i++)
+    {
+        color += ads(i, viewDir, normal);
+    }
+
+    FragColor = vec4(color, 1.0f);
+}
+
+vec3 ads(int lightIndex, vec3 viewDir, vec3 normal)
+{
+
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
 
     // Diffuse
-    vec3 lightDir = normalize(lightPos - FragPos);
-    vec3 normal = normalize(Normal);
-    float diff = max(dot(lightDir, normal), 0.0);
-    vec3 diffuse = diff * light.diffuse * color;
+    vec3 lightDir = normalize(lightPositions[lightIndex] - FragPos);
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diff * light.diffuse * vec3(texture(material.diffuse, TexCoords));
 
     // Specular
-    vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = 0.0;
 
     vec3 halfwayDir = normalize(lightDir + viewDir);
     spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
-    vec3 specular = light.specular * spec; // assuming bright white light color
+    vec3 specular = light.specular * spec * material.specular; // assuming bright white light color
 
-    FragColor = vec4(ambient + diffuse + specular, 1.0f);
+    return(diffuse + specular);
 
 }
+
