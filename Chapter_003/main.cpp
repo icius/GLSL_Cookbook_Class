@@ -54,6 +54,13 @@ glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 glm::vec3 halogen(1.0f, 0.945098039f, 0.878431373f);
 
+struct Light {
+    glm::vec3 position;
+    glm::vec3 ambient;  // La
+    glm::vec3 diffuse;  // Ld
+    glm::vec3 specular; // Ls
+};
+
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
@@ -112,7 +119,7 @@ int main()
     lampShader.init("shaders/lamp.vert","shaders/lamp.frag");
     floorShader.init("shaders/ADSTex.vert","shaders/ADSTex.frag");
     textShader.init("shaders/text.vert","shaders/text.frag");
-    adsShader.init("shaders/ADS.vert", "shaders/ADS.frag");
+    adsShader.init("shaders/ADSMulti.vert", "shaders/ADSMulti.frag");
 
     GLfloat planeVertices[] = {
         // Positions          // Normals         // Texture Coords
@@ -152,6 +159,18 @@ int main()
 
     VBOCube cube;
     VBOTorus torus(0.7f, 0.3f, 60, 60);
+
+    glm::vec3 lightPositions[] = {
+        glm::vec3( -3.5f,  2.5f, -4.0f),
+        glm::vec3( 0.0f,  2.5f, -4.0f),
+        glm::vec3( 3.5f,  2.5f, -4.0f),
+        glm::vec3( -3.5f,  2.5f, 0.0f),
+        glm::vec3( 0.0f,  2.5f, 0.0f),
+        glm::vec3( 3.5f,  2.5f, 0.0f),
+        glm::vec3( -3.5f,  2.5f, 4.0f),
+        glm::vec3( 0.0f,  2.5f, 4.0f),
+        glm::vec3( 3.5f,  2.5f, 4.0f)
+    };
 
     // Variables for the Frame Rate Display
     GLint frameRateCounterTarget = 4;
@@ -261,12 +280,14 @@ int main()
 
         //Send values to the fragment shader
 
-        adsShader.setUniform("lightPos", lightPos);
+
+        glUniform3fv(glGetUniformLocation(adsShader.getHandle(), "lightPositions"), 9,
+                    glm::value_ptr(lightPositions[0]));
+
         adsShader.setUniform("viewPos", camera.Position);
         adsShader.setUniform("light.ambient", glm::vec3(0.05f) * halogen);
         adsShader.setUniform("light.diffuse", glm::vec3(0.6f) * halogen);
         adsShader.setUniform("light.specular", glm::vec3(1.0f) * halogen);
-
 
         adsShader.setUniform("material.ambient", 0.0215f, 0.1745f, 0.0215f);
         adsShader.setUniform("material.diffuse", 0.07568f, 0.61424f, 0.07568f);
