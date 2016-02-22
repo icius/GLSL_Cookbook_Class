@@ -57,6 +57,8 @@
 		<Unit filename="Camera.h" />
 		<Unit filename="Text.h" />
 		<Unit filename="cookbookogl.h" />
+		<Unit filename="drawable.cpp" />
+		<Unit filename="drawable.h" />
 		<Unit filename="fonts/Arial.ttf" />
 		<Unit filename="gl_core_4_3.c">
 			<Option compilerVar="CC" />
@@ -67,15 +69,21 @@
 		<Unit filename="glutils.cpp" />
 		<Unit filename="glutils.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="shaders/diffuse.frag" />
+		<Unit filename="shaders/diffuse.vert" />
 		<Unit filename="shaders/floor.frag" />
 		<Unit filename="shaders/floor.vert" />
 		<Unit filename="shaders/lamp.frag" />
 		<Unit filename="shaders/lamp.vert" />
-		<Unit filename="shaders/test.frag" />
-		<Unit filename="shaders/test.vert" />
 		<Unit filename="shaders/text.frag" />
 		<Unit filename="shaders/text.vert" />
 		<Unit filename="textures/wood.png" />
+		<Unit filename="vbocube.cpp" />
+		<Unit filename="vbocube.h" />
+		<Unit filename="vboplane.cpp" />
+		<Unit filename="vboplane.h" />
+		<Unit filename="vbotorus.cpp" />
+		<Unit filename="vbotorus.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
