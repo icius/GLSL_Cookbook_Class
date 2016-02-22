@@ -19,6 +19,8 @@
 #include "glslprogram.h"
 #include "Camera.h"
 #include "Text.h"
+#include "vbocube.h"
+#include "vbotorus.h"
 
 // Other Libs
 #include <SOIL.h>
@@ -108,7 +110,7 @@ int main()
     lampShader.init("shaders/lamp.vert","shaders/lamp.frag");
     floorShader.init("shaders/floor.vert","shaders/floor.frag");
     textShader.init("shaders/text.vert","shaders/text.frag");
-    testShader.init("shaders/test.vert","shaders/test.frag");
+    testShader.init("shaders/diffuse.vert","shaders/diffuse.frag");
 
     GLfloat planeVertices[] = {
         // Positions          // Normals         // Texture Coords
@@ -119,50 +121,6 @@ int main()
          7.5f, -1.0f,  7.5f,  0.0f, 1.0f, 0.0f,  5.5f, 0.0f,
         -7.5f, -1.0f, -7.5f,  0.0f, 1.0f, 0.0f,  0.0f, 5.5f,
          7.5f, -1.0f, -7.5f,  0.0f, 1.0f, 0.0f,  5.5f, 5.5f
-    };
-
-    GLfloat cubeVertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     // Setup plane VAO
@@ -190,26 +148,8 @@ int main()
 
     glBindVertexArray(0);
 
-
-
-    // Setup cube VAO
-    GLuint cubeVAO, cubeVBO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &cubeVBO);
-    glBindVertexArray(cubeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices,
-                 GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-                          (GLvoid*)0);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-                          (GLvoid*)(3 * sizeof(GLfloat)));
-
-    glBindVertexArray(0);
-
+    VBOCube cube;
+    VBOTorus torus(0.7f, 0.3f, 30, 30);
 
     // Variables for the Frame Rate Display
     GLint frameRateCounterTarget = 4;
@@ -270,8 +210,7 @@ int main()
 
         lampShader.setUniform("model", model);
 
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        cube.render();
         glBindVertexArray(0);
 
 
@@ -318,18 +257,13 @@ int main()
         testShader.setUniform("Ld", 1.0f, 1.0f, 1.0f);
         testShader.setUniform("lightPos", lightPos);
 
-        //Render
-
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        torus.render();
         glBindVertexArray(0);
-
 
         glfwSwapBuffers(window);
     }
 
     glfwTerminate();
-
 
     return 0;
 }
