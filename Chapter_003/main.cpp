@@ -117,9 +117,9 @@ int main()
     GLSLProgram lampShader, floorShader, textShader, testShader, adsShader;
 
     lampShader.init("shaders/lamp.vert","shaders/lamp.frag");
-    floorShader.init("shaders/ADSTexMulti.vert","shaders/ADSTexMulti.frag");
+    floorShader.init("shaders/ADSTexMultiSpot.vert","shaders/ADSTexMultiSpot.frag");
     textShader.init("shaders/text.vert","shaders/text.frag");
-    adsShader.init("shaders/ADSMulti.vert", "shaders/ADSMulti.frag");
+    adsShader.init("shaders/ADSMultiSpot.vert", "shaders/ADSMultiSpot.frag");
 
     GLfloat planeVertices[] = {
         // Positions          // Normals         // Texture Coords
@@ -264,9 +264,16 @@ int main()
 
         floorShader.setUniform("viewPos", camera.Position);
 
-        floorShader.setUniform("light.ambient", glm::vec3(0.05f) * halogen);
-        floorShader.setUniform("light.diffuse", glm::vec3(0.2f) * halogen);
-        floorShader.setUniform("light.specular", glm::vec3(1.0f) * halogen);
+        floorShader.setUniform("light.direction", 0.0f, -1.0f, 0.0f);
+        floorShader.setUniform("light.constant", 1.0f);
+        floorShader.setUniform("light.linear", 0.09f);
+        floorShader.setUniform("light.quadratic", 0.032f);
+        floorShader.setUniform("light.cutOff", glm::cos(glm::radians(40.0f)));
+        floorShader.setUniform("light.outerCutOff", glm::cos(glm::radians(50.0f)));
+
+        floorShader.setUniform("light.ambient", glm::vec3(0.08f) * halogen);
+        floorShader.setUniform("light.diffuse", glm::vec3(0.7f) * halogen);
+        floorShader.setUniform("light.specular", glm::vec3(2.0f) * halogen);
 
         floorShader.setUniform("material.shininess", 128.0f);
 
@@ -293,7 +300,8 @@ int main()
 
         model = glm::mat4();
 
-        model *= glm::translate(glm::vec3(-3.5f, 0.0f, -4.0f));
+        //model *= glm::translate(glm::vec3(-2.0f, 0.0f, 0.0f));
+        model *= glm::rotate((GLfloat)glfwGetTime() * glm::radians(50.0f), vec3(0.0f, 1.0f, 0.0f));
         model *= glm::rotate(glm::radians(-35.0f), vec3(1.0f, 0.0f, 0.0f));
         model *= glm::rotate(glm::radians(35.0f), vec3(0.0f, 1.0f, 0.0f));
 
@@ -308,14 +316,31 @@ int main()
                     glm::value_ptr(lightPositions[0]));
 
         adsShader.setUniform("viewPos", camera.Position);
-        adsShader.setUniform("light.ambient", glm::vec3(0.05f) * halogen);
-        adsShader.setUniform("light.diffuse", glm::vec3(0.2f) * halogen);
-        adsShader.setUniform("light.specular", glm::vec3(1.0f) * halogen);
+
+        adsShader.setUniform("light.direction", 0.0f, -1.0f, 0.0f);
+        adsShader.setUniform("light.constant", 1.0f);
+        adsShader.setUniform("light.linear", 0.09f);
+        adsShader.setUniform("light.quadratic", 0.032f);
+        adsShader.setUniform("light.cutOff", glm::cos(glm::radians(40.0f)));
+        adsShader.setUniform("light.outerCutOff", glm::cos(glm::radians(50.0f)));
+
+        adsShader.setUniform("light.ambient", glm::vec3(0.08f) * halogen);
+        adsShader.setUniform("light.diffuse", glm::vec3(0.7f) * halogen);
+        adsShader.setUniform("light.specular", glm::vec3(2.0f) * halogen);
+
 
         adsShader.setUniform("material.ambient", 0.0215f, 0.1745f, 0.0215f);
         adsShader.setUniform("material.diffuse", 0.07568f, 0.61424f, 0.07568f);
         adsShader.setUniform("material.specular", 0.633f, 0.727811f, 0.633f);
         adsShader.setUniform("material.shininess", 128.0f);
+
+        /*
+        adsShader.setUniform("material.ambient", 0.135f, 0.2225f, 0.1575f);
+        adsShader.setUniform("material.diffuse", 0.54f, 0.89f, 0.63f);
+        adsShader.setUniform("material.specular", 0.316228f, 0.316228f, 0.316228f);
+        adsShader.setUniform("material.shininess", 0.1f * 128);
+        */
+
 
         torus.render();
         glBindVertexArray(0);
