@@ -19,6 +19,7 @@
 #include "glslprogram.h"
 #include "Camera.h"
 #include "Text.h"
+#include "Model.h"
 #include "vbocube.h"
 #include "vbotorus.h"
 
@@ -104,6 +105,7 @@ int main()
    // Setup some OpenGL options
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -114,12 +116,13 @@ int main()
     // Draw in wireframe
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    GLSLProgram lampShader, floorShader, textShader, testShader, adsShader;
+    GLSLProgram lampShader, floorShader, textShader, testShader, adsShader, diamondShader;
 
     lampShader.init("shaders/lamp.vert","shaders/lamp.frag");
     floorShader.init("shaders/ADSTexMultiSpot.vert","shaders/ADSTexMultiSpot.frag");
     textShader.init("shaders/text.vert","shaders/text.frag");
     adsShader.init("shaders/ADSMultiSpot.vert", "shaders/ADSMultiSpot.frag");
+    diamondShader.init("shaders/ADSTexMultiSpot.vert","shaders/ADSTexMultiSpot.frag");
 
     GLfloat planeVertices[] = {
         // Positions          // Normals         // Texture Coords
@@ -171,6 +174,8 @@ int main()
         glm::vec3( 0.0f,  2.5f, 4.0f),
         glm::vec3( 3.5f,  2.5f, 4.0f)
     };
+
+    Model diamond("models/diamond.obj");
 
     // Variables for the Frame Rate Display
     GLint frameRateCounterTarget = 4;
@@ -255,6 +260,8 @@ int main()
         floorShader.setUniform("projection", projection);
         floorShader.setUniform("view", view);
 
+        model = glm::mat4();
+        floorShader.setUniform("model", model);
 
         glUniform3fv(glGetUniformLocation(floorShader.getHandle(), "lightPositions"), 9,
                      glm::value_ptr(lightPositions[0]));
@@ -334,16 +341,52 @@ int main()
         adsShader.setUniform("material.specular", 0.633f, 0.727811f, 0.633f);
         adsShader.setUniform("material.shininess", 128.0f);
 
-        /*
+
         adsShader.setUniform("material.ambient", 0.135f, 0.2225f, 0.1575f);
         adsShader.setUniform("material.diffuse", 0.54f, 0.89f, 0.63f);
         adsShader.setUniform("material.specular", 0.316228f, 0.316228f, 0.316228f);
         adsShader.setUniform("material.shininess", 0.1f * 128);
-        */
 
 
         torus.render();
         glBindVertexArray(0);
+
+/*
+        //------ Setup and Render the Diamond ------
+
+        diamondShader.use();
+
+        diamondShader.setUniform("projection", projection);
+        diamondShader.setUniform("view", view);
+
+        model = glm::mat4();
+        //model = glm::scale(model, glm::vec3(8.0f));
+
+        diamondShader.setUniform("model", model);
+
+        glUniform3fv(glGetUniformLocation(diamondShader.getHandle(), "lightPositions"), 9,
+                     glm::value_ptr(lightPositions[0]));
+
+
+        //diamondShader.setUniform("lightPos", lightPos);
+
+        diamondShader.setUniform("viewPos", camera.Position);
+
+        diamondShader.setUniform("light.direction", 0.0f, -1.0f, 0.0f);
+        diamondShader.setUniform("light.constant", 1.0f);
+        diamondShader.setUniform("light.linear", 0.09f);
+        diamondShader.setUniform("light.quadratic", 0.032f);
+        diamondShader.setUniform("light.cutOff", glm::cos(glm::radians(40.0f)));
+        diamondShader.setUniform("light.outerCutOff", glm::cos(glm::radians(50.0f)));
+
+        diamondShader.setUniform("light.ambient", glm::vec3(0.08f) * halogen);
+        diamondShader.setUniform("light.diffuse", glm::vec3(0.7f) * halogen);
+        diamondShader.setUniform("light.specular", glm::vec3(2.0f) * halogen);
+
+        diamondShader.setUniform("material.shininess", 128.0f);
+
+        diamond.Draw(diamondShader);
+*/
 
         glfwSwapBuffers(window);
     }

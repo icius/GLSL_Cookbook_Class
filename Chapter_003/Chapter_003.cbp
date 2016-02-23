@@ -55,6 +55,8 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="Camera.h" />
+		<Unit filename="Mesh.h" />
+		<Unit filename="Model.h" />
 		<Unit filename="Text.h" />
 		<Unit filename="cookbookogl.h" />
 		<Unit filename="drawable.cpp" />
@@ -71,8 +73,16 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="shaders/ADS.frag" />
 		<Unit filename="shaders/ADS.vert" />
+		<Unit filename="shaders/ADSMulti.frag" />
+		<Unit filename="shaders/ADSMulti.vert" />
+		<Unit filename="shaders/ADSMultiSpot.frag" />
+		<Unit filename="shaders/ADSMultiSpot.vert" />
 		<Unit filename="shaders/ADSTex.frag" />
 		<Unit filename="shaders/ADSTex.vert" />
+		<Unit filename="shaders/ADSTexMulti.frag" />
+		<Unit filename="shaders/ADSTexMulti.vert" />
+		<Unit filename="shaders/ADSTexMultiSpot.frag" />
+		<Unit filename="shaders/ADSTexMultiSpot.vert" />
 		<Unit filename="shaders/lamp.frag" />
 		<Unit filename="shaders/lamp.vert" />
 		<Unit filename="shaders/text.frag" />
@@ -80,6 +90,7 @@
 		<Unit filename="textures/wood.png" />
 		<Unit filename="vbocube.cpp" />
 		<Unit filename="vbocube.h" />
+		<Unit filename="vbodiamond.h" />
 		<Unit filename="vboplane.cpp" />
 		<Unit filename="vboplane.h" />
 		<Unit filename="vbotorus.cpp" />
