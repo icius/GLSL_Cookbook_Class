@@ -6,7 +6,8 @@
 #include <cstdio>
 
 VBOCube::VBOCube()
-{
+{// TODO (aklaum#1#): Need to modify this so that it winds properly.  OpenGL is assuming that the top is the back and culling makes it invisible.
+
     float side = 1.0f;
     float side2 = side / 2.0f;
 

@@ -22,6 +22,7 @@
 #include "Model.h"
 #include "vbocube.h"
 #include "vbotorus.h"
+#include "vboplane.h"
 
 // Other Libs
 #include <SOIL.h>
@@ -87,6 +88,7 @@ int main()
     int num_failed = loaded - ogl_LOAD_SUCCEEDED;
     printf("Number of functions that failed to load: %i.\n",num_failed);
 
+
     // Set the required callback functions
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
@@ -94,10 +96,6 @@ int main()
 
     // Options
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    // Initialize GLEW to setup the OpenGL Function pointers
-    //glewExperimental = GL_TRUE;
-    //glewInit();
 
     // Define the viewport dimensions
     glViewport(0, 0, screenWidth, screenHeight);
@@ -123,7 +121,7 @@ int main()
     textShader.init("shaders/text.vert","shaders/text.frag");
     adsShader.init("shaders/ADSMultiSpot.vert", "shaders/ADSMultiSpot.frag");
     diamondShader.init("shaders/ADSTexMultiSpot.vert","shaders/ADSTexMultiSpot.frag");
-
+/*
     GLfloat planeVertices[] = {
         // Positions          // Normals         // Texture Coords
          7.5f, -1.0f,  7.5f,  0.0f, 1.0f, 0.0f,  5.5f, 0.0f,
@@ -159,9 +157,64 @@ int main()
                           (GLvoid*)(6 * sizeof(GLfloat)));
 
     glBindVertexArray(0);
+  */
+
+/*
+    GLfloat planeVertices[] = {
+        // Positions          // Normals         // Texture Coords
+         7.5f, -1.0f, -7.5f,  0.0f, 1.0f, 0.0f,  5.5f, 5.5f,  //Top Right
+         7.5f, -1.0f,  7.5f,  0.0f, 1.0f, 0.0f,  5.5f, 0.0f, //Bottom Right
+        -7.5f, -1.0f,  7.5f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, //Bottom Left
+        -7.5f, -1.0f, -7.5f,  0.0f, 1.0f, 0.0f,  0.0f, 5.5f //Top Left
+    };
+
+    GLuint indices[] = {  // Note that we start from 0!
+        0, 1, 3, // First Triangle
+        1, 2, 3  // Second Triangle
+    };
+
+*/
+    GLfloat planeVertices[] = {
+        // Positions          // Normals         // Texture Coords
+        -7.5f, -1.0f, -7.5f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,  //Top Left
+        7.5f, -1.0f,  -7.5f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f, //Top Right
+        -7.5f, -1.0f,  7.5f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, //Bottom Left
+        7.5f, -1.0f, 7.5f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f //Bottom Right
+    };
+
+    GLuint indices[] = {  // Note that we start from 0!
+        0, 2, 3, // First Triangle
+        0, 3, 1  // Second Triangle
+    };
+
+    GLuint planeVBO, planeVAO, planeEBO;
+    glGenVertexArrays(1, &planeVAO);
+    glGenBuffers(1, &planeVBO);
+    glGenBuffers(1, &planeEBO);
+
+    glBindVertexArray(planeVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, planeEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    // Color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+    // TexCoord attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0); // Unbind planeVAO
 
     VBOCube cube;
     VBOTorus torus(0.7f, 0.3f, 60, 60);
+    VBOPlane plane(15.0f, 15.0f, 1, 1);
 
     glm::vec3 lightPositions[] = {
         glm::vec3( -3.5f,  2.5f, -4.0f),
@@ -284,6 +337,7 @@ int main()
 
         floorShader.setUniform("material.shininess", 128.0f);
 
+
         // Bind diffuse map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, floorTexture);
@@ -291,10 +345,18 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, floorSpec);
 
-        glBindVertexArray(planeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
 
+        plane.render();
+
+
+/*
+        glBindVertexArray(planeVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+*/
+
+
+        /*
 
         //------ Setup and Render the test object ------
 
@@ -350,8 +412,8 @@ int main()
 
         torus.render();
         glBindVertexArray(0);
+*/
 
-/*
         //------ Setup and Render the Diamond ------
 
         diamondShader.use();
@@ -360,6 +422,7 @@ int main()
         diamondShader.setUniform("view", view);
 
         model = glm::mat4();
+        model *= glm::rotate((GLfloat)glfwGetTime() * glm::radians(50.0f), vec3(0.0f, 1.0f, 0.0f));
         //model = glm::scale(model, glm::vec3(8.0f));
 
         diamondShader.setUniform("model", model);
@@ -386,7 +449,6 @@ int main()
         diamondShader.setUniform("material.shininess", 128.0f);
 
         diamond.Draw(diamondShader);
-*/
 
         glfwSwapBuffers(window);
     }

@@ -7,10 +7,13 @@
 
 #include <cstdio>
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 VBOPlane::VBOPlane(float xsize, float zsize, int xdivs, int zdivs, float smax, float tmax)
 {
-    
+
     faces = xdivs * zdivs;
     float * v = new float[3 * (xdivs + 1) * (zdivs + 1)];
 	float * n = new float[3 * (xdivs + 1) * (zdivs + 1)];
@@ -83,7 +86,35 @@ VBOPlane::VBOPlane(float xsize, float zsize, int xdivs, int zdivs, float smax, f
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * xdivs * zdivs * sizeof(unsigned int), el, GL_STATIC_DRAW);
 
     glBindVertexArray(0);
-    
+
+    cout << "Vertex Array" << endl;
+    for(int i=0; i < (3 * (xdivs + 1) * (zdivs + 1)); ++i) {
+        cout << v[i] << " ";
+        if((i + 1) % 3 == 0 && i > 0)
+            cout << endl;
+    }
+
+    cout << "Normal Array" << endl;
+    for(int i=0; i < (3 * (xdivs + 1) * (zdivs + 1)); ++i) {
+        cout << n[i] << " ";
+        if((i + 1) % 3 == 0 && i > 0)
+            cout << endl;
+    }
+
+    cout << "Texture Array" << endl;
+    for(int i=0; i < (2 * (xdivs + 1) * (zdivs + 1)); ++i) {
+        cout << v[i] << " ";
+        if((i + 1) % 2 == 0 && i > 0)
+            cout << endl;
+    }
+
+    cout << "Index Array" << endl;
+    for(int i=0; i < (6 * xdivs * zdivs); ++i) {
+        cout << el[i] << " ";
+        if((i + 1) % 3 == 0 && i > 0)
+            cout << endl;
+    }
+
     delete [] v;
 	delete [] n;
     delete [] tex;
@@ -93,6 +124,6 @@ VBOPlane::VBOPlane(float xsize, float zsize, int xdivs, int zdivs, float smax, f
 void VBOPlane::render() const {
     GLUtils::checkForOpenGLError(__FILE__,__LINE__);
     glBindVertexArray(vaoHandle);
-    glDrawElements(GL_TRIANGLES, 6 * faces, GL_UNSIGNED_INT, ((GLubyte *)NULL + (0)));
+    glDrawElements(GL_TRIANGLES, 6 * faces, GL_UNSIGNED_INT, nullptr);
     GLUtils::checkForOpenGLError(__FILE__,__LINE__);
 }
